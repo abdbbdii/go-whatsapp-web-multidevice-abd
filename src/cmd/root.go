@@ -34,7 +34,7 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Short: "Send free whatsapp API",
-	Long: `This application is from clone https://github.com/aldinokemal/go-whatsapp-web-multidevice, 
+	Long: `This application is from clone https://github.com/aldinokemal/go-whatsapp-web-multidevice,
 you can send whatsapp over http api but your whatsapp account have to be multi device version`,
 	Run: runRest,
 }
@@ -48,6 +48,38 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&config.WhatsappAutoReplyMessage, "autoreply", "", config.WhatsappAutoReplyMessage, `auto reply when received message --autoreply <string> | example: --autoreply="Don't reply this message"`)
 	rootCmd.PersistentFlags().StringVarP(&config.WhatsappWebhook, "webhook", "w", config.WhatsappWebhook, `forward event to webhook --webhook <string> | example: --webhook="https://yourcallback.com/callback"`)
 	rootCmd.PersistentFlags().BoolVarP(&config.WhatsappAccountValidation, "account-validation", "", config.WhatsappAccountValidation, `enable or disable account validation --account-validation <true/false> | example: --account-validation=true`)
+
+	if config.AppPort == "" {
+		config.AppPort = os.Getenv("AppPort")
+	}
+	if !config.AppDebug {
+		debugEnv := os.Getenv("AppDebug")
+		if debugEnv == "true" {
+			config.AppDebug = true
+		} else if debugEnv == "false" {
+			config.AppDebug = false
+		}
+	}
+	if config.AppOs == "" {
+		config.AppOs = os.Getenv("AppOs")
+	}
+	if config.AppBasicAuthCredential == "" {
+		config.AppBasicAuthCredential = os.Getenv("AppBasicAuthCredential")
+	}
+	if config.WhatsappAutoReplyMessage == "" {
+		config.WhatsappAutoReplyMessage = os.Getenv("WhatsappAutoReplyMessage")
+	}
+	if config.WhatsappWebhook == "" {
+		config.WhatsappWebhook = os.Getenv("WhatsappWebhook")
+	}
+	if !config.WhatsappAccountValidation {
+		accountValidationEnv := os.Getenv("WhatsappAccountValidation")
+		if accountValidationEnv == "true" {
+			config.WhatsappAccountValidation = true
+		} else if accountValidationEnv == "false" {
+			config.WhatsappAccountValidation = false
+		}
+	}
 }
 
 func runRest(_ *cobra.Command, _ []string) {
